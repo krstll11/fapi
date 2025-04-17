@@ -1,46 +1,33 @@
-from typing import Union
+from fastapi import FastAPI, HTTPException, Depends
+from database import get_db
+from sqlalchemy.orm import Session
+import models
+from typing import List
+import pyd
 
-from fastapi import FastAPI, Query
-from validator import Item
+app=FastAPI()
 
-app = FastAPI()
-items=[{
-    "id":1,
-    "name":"laptop",
-    "price":1000,
-    "description":"This is a laptop"
-}]
-
-@app.get("/items/")
-def find_items(name:Union[str,None]=None, min_price:Union[float,None]=None,max_price:Union[float,None]=None,limit:Union[int,None]=None):
-    yilded_count=1
-    for item in items:
-        if name and item["name"]!=name:
-            continue
-        if min_price and item["price"]<min_price:
-            continue
-        if max_price and item["price"]>max_price:
-            continue
-        if limit and yilded_count>limit:
-            break
-        yilded_count+=1
-        yield item
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id:int)->Item:
-    for item in items:
-        if item["id"]==item_id:
-            return item
-
-
-@app.post("/items/")
-def create_item(item: Item)->Item:
-    item={
-    "id":len(items)+1,
-    "name":item.name,
-    "price":item.price,
-    "description":item.description
-}
-    items.append(item)
-    return item
+@app.get("/cars",response_model=List[pyd.SchemaCar])
+async def get_cars(db:Session=Depends(get_db)):
+    cars=db.query(models.Car).all()
+    return cars
+@app.get("/cars/{car_id}",response_model=pyd.SchemaCar)
+async def get_car(car_id:int,db:Session=Depends(get_db)):
+    car=db.query(models.Car).filter(models.Car.id==car_id).first()
+    if not car:
+        raise HTTPException(status_code=404,detail="Car not found")
+    return car
+@app.post("/cars",response_model=pyd.BaseProduct)
+async def create_car(car:pyd.CreateProduct,db:Session=Depends(get_db)):
+    car_db=models.Car(**car.model_dump())
+    db.add(car_db)
+    db.commit()
+    return car_db
+@app.delete("/cars/{car_id}")
+async def delete_car(car_id:int,db:Session=Depends(get_db)):
+    car=db.query(models.Car).filter(models.Car.id==car_id).first()
+    if not car:
+        raise HTTPException(status_code=404,detail="Car not found")
+    db.delete(car)
+    db.commit()
+    return car,{"message":"Car deleted"}
