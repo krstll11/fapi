@@ -6,11 +6,9 @@ import models as m
 m.Base.metadata.drop_all(bind=engine)
 m.Base.metadata.create_all(bind=engine)
 
-# ... (previous imports and setup code remains the same)
 
 with Session(bind=engine) as session:
-    country1 = m.Country(name="Japan")
-    session.add(country1)
+
     
     
     category1 = m.Category(type="Muscle")
@@ -28,7 +26,7 @@ with Session(bind=engine) as session:
         mileage=10000,
         dateinsystem="2022-01-01",
         image="https://example.com/image.jpg",
-        cars_available=[m.CarCountry(country=country1)]  
+        
     )
     
     audi_s6 = m.Car(
@@ -39,7 +37,7 @@ with Session(bind=engine) as session:
         mileage=10000,
         dateinsystem="2022-01-01",
         image="https://example.com/image.jpg",
-        cars_available=[m.CarCountry(country=country1)]
+        
     )
     
     audi_q8 = m.Car(
@@ -50,7 +48,7 @@ with Session(bind=engine) as session:
         mileage=10000,
         dateinsystem="2022-01-01",
         image="https://example.com/image.jpg",
-        cars_available=[m.CarCountry(country=country1)]
+        
     )
     
     session.add_all([mustang, audi_s6, audi_q8])
