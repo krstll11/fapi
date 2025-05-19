@@ -22,5 +22,10 @@ class Category(Base):
     __tablename__ = "categories"
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
+class User(Base):
+    __tablename__="users"
+    id= Column(Integer, primary_key=True, index=True)
+    username= Column(String)
+    password= Column(String)
 
 

@@ -11,4 +11,6 @@ class CreateProduct(BaseModel):
     mileage: int
 class CreateCategory(BaseModel):
     type: str
-
+class CreateUser(BaseModel):
+    username: str
+    password: str

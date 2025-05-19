@@ -50,6 +50,10 @@ with Session(bind=engine) as session:
         image="https://example.com/image.jpg",
         
     )
+    user= m.User(
+        username="root",
+        password="root"
+    )
     
     session.add_all([mustang, audi_s6, audi_q8])
     session.commit()

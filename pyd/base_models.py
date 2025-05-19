@@ -13,5 +13,10 @@ class BaseProduct(BaseModel):
 class BaseCategory(BaseModel):
     id: int
     type: str
+class User(BaseModel):
+    id: int
+    username: str
+    password: str
+
 
 
